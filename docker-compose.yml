@@ -1,0 +1,12 @@
+version: "3.8"  # Compatible with most Docker versions
+
+services:
+  app:
+    build: .
+    container_name: sentiment_analysis
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python app/main.py
