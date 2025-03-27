@@ -17,3 +17,6 @@ touch data/dataset.csv
 # Create Docker and config files
 touch Dockerfile docker-compose.yml .gitignore README.md
 
+#RUN Command
+docker-compose up --build
+

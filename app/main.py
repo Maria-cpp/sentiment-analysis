@@ -9,14 +9,12 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import accuracy_score
 
-# Set explicit NLTK data path
-NLTK_DATA_PATH = "/usr/local/nltk_data"
-os.makedirs(NLTK_DATA_PATH, exist_ok=True)
-nltk.data.path.append(NLTK_DATA_PATH)
-
 # Download required NLTK resources
-nltk.download('punkt', download_dir=NLTK_DATA_PATH)
-nltk.download('stopwords', download_dir=NLTK_DATA_PATH)
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('omw-1.4')
+nltk.download('punkt_tab')
+
 # Load dataset
 df = pd.read_csv("data/dataset.csv")
 
@@ -51,8 +49,12 @@ print("Model training complete!")
 # Predict on test data
 y_pred = model.predict(X_test)
 
+print(f"y_pred = ", y_pred)
+
 # Calculate accuracy
 accuracy = accuracy_score(y_test, y_pred)
+print(f"accuracy = ", accuracy)
+
 print(f"Model Accuracy: {accuracy * 100:.2f}%")
 
 def predict_sentiment(text):
@@ -61,5 +63,5 @@ def predict_sentiment(text):
     return "Positive 😊" if prediction == 1 else "Negative 😡"
 
 # Example Predictions
-print(predict_sentiment("This product is amazing!"))
-print(predict_sentiment("I hate this item, worst ever."))
+print(f"This product is amazing! : " , predict_sentiment("This product is amazing!"))
+print(f"I hate this item, worst ever. : " ,predict_sentiment("I hate this item, worst ever."))
