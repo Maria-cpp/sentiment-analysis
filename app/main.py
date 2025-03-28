@@ -27,9 +27,9 @@ def preprocess_text(text):
     # Tokenize words
     words = word_tokenize(text)
     # Remove stopwords
-    words = [word for word in words if word.isalnum() and word not in stopwords.words("english")]
+    filtered_words = [word for word in words if word.isalnum() and word not in stopwords.words("english")]
     # Join words back to text
-    return " ".join(words)
+    return " ".join(filtered_words) if filtered_words else text  # Ensure text is not empty
 
 # Apply preprocessing to all reviews
 df['review'] = df['review'].apply(preprocess_text)
@@ -49,19 +49,16 @@ print("Model training complete!")
 # Predict on test data
 y_pred = model.predict(X_test)
 
-print(f"y_pred = ", y_pred)
-
 # Calculate accuracy
 accuracy = accuracy_score(y_test, y_pred)
-print(f"accuracy = ", accuracy)
-
 print(f"Model Accuracy: {accuracy * 100:.2f}%")
 
 def predict_sentiment(text):
     text = preprocess_text(text)
+
     prediction = model.predict([text])[0]
     return "Positive 😊" if prediction == 1 else "Negative 😡"
 
 # Example Predictions
-print(f"This product is amazing! : " , predict_sentiment("This product is amazing!"))
+print(f"This product is great! : " , predict_sentiment("This product is great!"))
 print(f"I hate this item, worst ever. : " ,predict_sentiment("I hate this item, worst ever."))
