@@ -20,4 +20,4 @@ touch Dockerfile docker-compose.yml .gitignore README.md
 #RUN Command
 docker-compose up --build
 
-<img src="images/image.png" width="128"/>
+<img src="images/image.png"/>
