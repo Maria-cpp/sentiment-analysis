@@ -5,6 +5,8 @@ services:
     build: .
     container_name: sentiment_analysis
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     volumes:
       - .:/app
     environment:

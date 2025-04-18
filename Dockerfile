@@ -1,18 +1,21 @@
-# Use Python official base image
+# Use official Python base image
 FROM python:3.9
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
+
+# Copy all files to the container
+COPY . /app
 
 # Copy and install dependencies
 COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download required NLTK resources
-RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords'); nltk.download('omw-1.4'); nltk.download('punkt_tab')"
+# Download NLTK data
+RUN python -m nltk.downloader punkt stopwords
 
-# Copy the rest of the application
-COPY . .
+# Expose the Chainlit default port
+EXPOSE 8000
 
-# Command to run the application
-CMD ["python", "app/main.py"]
+# Run Chainlit inside the container
+CMD ["chainlit", "run", "app/main.py", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,6 +1,6 @@
+import chainlit as cl
 import pandas as pd
 import nltk
-import os
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer
@@ -22,43 +22,37 @@ df = pd.read_csv("data/dataset.csv")
 df['sentiment'] = df['sentiment'].map({'positive': 1, 'negative': 0})
 
 def preprocess_text(text):
-    # Convert to lowercase
+    """Preprocess the text by converting to lowercase, removing stopwords, and tokenizing."""
     text = text.lower()
-    # Tokenize words
     words = word_tokenize(text)
-    # Remove stopwords
-    filtered_words = [word for word in words if word.isalnum() and word not in stopwords.words("english")]
-    # Join words back to text
-    return " ".join(filtered_words) if filtered_words else text  # Ensure text is not empty
+    words = [word for word in words if word.isalnum() and word not in stopwords.words("english")]
+    return " ".join(words)
 
-# Apply preprocessing to all reviews
+# Apply preprocessing
 df['review'] = df['review'].apply(preprocess_text)
 
-# **Add This Line Here**
-# Split data into training (80%) and testing (20%)
+# Split data
 X_train, X_test, y_train, y_test = train_test_split(df['review'], df['sentiment'], test_size=0.2, random_state=42)
 
-# Create a model pipeline with CountVectorizer + Naïve Bayes
+# Create model pipeline
 model = make_pipeline(CountVectorizer(), MultinomialNB())
 
 # Train the model
 model.fit(X_train, y_train)
 
-print("Model training complete!")
-
-# Predict on test data
+# Accuracy check
 y_pred = model.predict(X_test)
-
-# Calculate accuracy
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Model Accuracy: {accuracy * 100:.2f}%")
 
-def predict_sentiment(text):
-    text = preprocess_text(text)
+# Chainlit app
+@cl.on_message
+async def main(message):
+    """Process user input and classify sentiment."""
+    user_input = message.content
+    processed_text = preprocess_text(user_input)
+    prediction = model.predict([processed_text])[0]
+    sentiment = "Positive 😊" if prediction == 1 else "Negative 😡"
+    
+    await cl.Message(content=f"**Review Sentiment:** {sentiment}").send()
 
-    prediction = model.predict([text])[0]
-    return "Positive 😊" if prediction == 1 else "Negative 😡"
-
-# Example Predictions
-print(f"This product is great! : " , predict_sentiment("This product is great!"))
-print(f"I hate this item, worst ever. : " ,predict_sentiment("I hate this item, worst ever."))
